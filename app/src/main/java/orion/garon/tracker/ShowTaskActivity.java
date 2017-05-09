@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.KeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +31,7 @@ public class ShowTaskActivity extends AppCompatActivity {
 
     private Task selectedTask;
     private Intent intent;
+    private List<EditText> textFields;
 
     @Bind(R.id.task_name)
     EditText taskName;
@@ -64,18 +69,18 @@ public class ShowTaskActivity extends AppCompatActivity {
         selectedTask = new Task();
         intent = getIntent();
 
+
+
         initTask();
         initViews();
-
-
-
+        groupTextFields();
     }
 
     public void initViews() {
 
         contentEdit.setVisibility(View.VISIBLE);
-        createButton.setText("Save changes");
-        createButton.setClickable(false);
+        createButton.setText(R.string.save_changes_button);
+        createButton.setEnabled(false);
 
         taskName.setText(selectedTask.name);
         taskTime.setText(String.valueOf(selectedTask.estimatedTime));
@@ -84,9 +89,6 @@ public class ShowTaskActivity extends AppCompatActivity {
         taskStartDate.setText(selectedTask.startDate);
         taskProgress.setText(String.valueOf(selectedTask.completion));
         taskState.setText(selectedTask.state);
-
-        taskName.setKeyListener(null);
-
     }
 
     public void initTask() {
@@ -100,6 +102,40 @@ public class ShowTaskActivity extends AppCompatActivity {
         selectedTask.state = intent.getStringExtra(Task.STATE);
     }
 
+    public void groupTextFields() {
+
+        textFields = new ArrayList<>();
+
+        textFields.add(taskName);
+        textFields.add(taskTime);
+        textFields.add(taskDescription);
+        textFields.add(taskDueDate);
+        textFields.add(taskStartDate);
+        textFields.add(taskState);
+        textFields.add(taskProgress);
+
+        for(int i = 0;i < textFields.size();i++) {
+            textFields.get(i).setEnabled(false);
+        }
+    }
+
+    public void changeEdit(boolean buttonIsChecked) {
+
+        for(int i = 0;i < textFields.size();i++) {
+
+            if(buttonIsChecked) {
+
+                textFields.get(i).setEnabled(true);
+                createButton.setEnabled(true);
+
+            } else {
+
+                textFields.get(i).setEnabled(false);
+                createButton.setEnabled(false);
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_show_task, menu);
@@ -110,7 +146,8 @@ public class ShowTaskActivity extends AppCompatActivity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Start or stop your Service
+
+                changeEdit(isChecked);
             }
         });
         return super.onCreateOptionsMenu(menu);
