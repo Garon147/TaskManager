@@ -19,4 +19,8 @@ public class TaskDAO extends BaseDaoImpl<Task, Integer> {
     public List<Task> getAllTasks() throws SQLException {
         return this.queryForAll();
     }
+
+    public Task getTaskById(int id) throws SQLException {
+        return this.queryForId(id);
+    }
 }

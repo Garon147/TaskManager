@@ -16,11 +16,16 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.j256.ormlite.misc.TransactionManager;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import orion.garon.tracker.database.HelperFactory;
 import orion.garon.tracker.database.Task;
 
 /**
@@ -65,11 +70,10 @@ public class ShowTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_task);
         ButterKnife.bind(this);
+        HelperFactory.setDatabaseHelper(this);
 
         selectedTask = new Task();
         intent = getIntent();
-
-
 
         initTask();
         initViews();
@@ -82,6 +86,15 @@ public class ShowTaskActivity extends AppCompatActivity {
         createButton.setText(R.string.save_changes_button);
         createButton.setEnabled(false);
 
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                updateTask();
+
+            }
+        });
+
         taskName.setText(selectedTask.name);
         taskTime.setText(String.valueOf(selectedTask.estimatedTime));
         taskDescription.setText(selectedTask.description);
@@ -93,6 +106,7 @@ public class ShowTaskActivity extends AppCompatActivity {
 
     public void initTask() {
 
+        selectedTask.id = intent.getIntExtra(Task.ID, 0);
         selectedTask.name = intent.getStringExtra(Task.NAME);
         selectedTask.dueDate = intent.getStringExtra(Task.DUE_DATE);
         selectedTask.startDate = intent.getStringExtra(Task.START_DATE);
@@ -133,6 +147,48 @@ public class ShowTaskActivity extends AppCompatActivity {
                 textFields.get(i).setEnabled(false);
                 createButton.setEnabled(false);
             }
+        }
+    }
+
+    public void updateTask() {
+
+        try {
+
+            TransactionManager.callInTransaction(HelperFactory.getDatabaseHelper().getConnectionSource(), new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+
+                                Task task = HelperFactory.getDatabaseHelper().getTaskDAO().getTaskById(selectedTask.id);
+
+                                if(task != null) {
+                                    task.state = taskState.getText().toString();
+                                    task.estimatedTime = Float.valueOf(taskTime.getText().toString());
+                                    task.completion = Integer.valueOf(taskProgress.getText().toString());
+                                    task.name = taskName.getText().toString();
+                                    task.description = taskDescription.getText().toString();
+                                    task.startDate = taskStartDate.getText().toString();
+                                    task.dueDate = taskDueDate.getText().toString();
+
+                                    HelperFactory.getDatabaseHelper().getTaskDAO().update(task);
+                                }
+
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
