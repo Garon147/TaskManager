@@ -50,17 +50,8 @@ public class TaskFragment extends Fragment {
     @Bind(R.id.task_description)
     EditText taskDescription;
 
-    @Bind(R.id.task_state)
-    EditText taskState;
-
-    @Bind(R.id.task_progress)
-    EditText taskProgress;
-
     @Bind(R.id.button_create)
     Button createButton;
-
-    @Bind(R.id.content_edit)
-    LinearLayout editContent;
 
     @Nullable
     @Override
@@ -69,6 +60,7 @@ public class TaskFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         ButterKnife.bind(this, view);
         HelperFactory.setDatabaseHelper(getContext());
+
         return view;
     }
 

@@ -26,7 +26,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        holder.bind(tasks.get(position));
+        holder.setVars(tasks.get(position));
     }
 
     @Override

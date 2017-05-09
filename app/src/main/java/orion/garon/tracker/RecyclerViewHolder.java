@@ -32,7 +32,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(Task task) {
+    public void setVars(Task task) {
 
         title.setText(task.name);
         state.setText(task.state);

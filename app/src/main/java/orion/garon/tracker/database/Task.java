@@ -16,6 +16,7 @@ import java.util.List;
 @DatabaseTable(tableName = "tasks")
 public class Task {
 
+    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String COMPLETION = "completion";
     public static final String STATE = "state";
@@ -25,7 +26,7 @@ public class Task {
     public static final String DESCRIPTION = "description";
 
     @DatabaseField(generatedId = true)
-    private int id;
+    public int id;
 
     @DatabaseField(dataType = DataType.STRING, columnName = NAME)
     public String name;

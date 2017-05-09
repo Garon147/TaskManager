@@ -1,5 +1,6 @@
 package orion.garon.tracker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import orion.garon.tracker.database.Task;
 import orion.garon.tracker.database.TaskDAO;
 
 public class MainActivity extends AppCompatActivity {
+
 
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
@@ -51,9 +53,31 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         taskFragment = new TaskFragment();
         fragmentManager = getSupportFragmentManager();
+
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                Intent intent = new Intent(getApplicationContext(), ShowTaskActivity.class);
+                try{
+                    makeIntent((Task)(((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks()).get(position)), intent);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                startActivity(intent);
+
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
+
+
+
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -81,8 +105,18 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStack();
             fab.setVisibility(View.VISIBLE);
         }
+    }
 
+    public void makeIntent(Task task, Intent intent) {
 
+        intent.putExtra(Task.ID, task.id);
+        intent.putExtra(Task.NAME, task.name);
+        intent.putExtra(Task.COMPLETION, task.completion);
+        intent.putExtra(Task.DESCRIPTION, task.description);
+        intent.putExtra(Task.DUE_DATE, task.dueDate);
+        intent.putExtra(Task.START_DATE, task.startDate);
+        intent.putExtra(Task.ESTIMATED_TIME, task.estimatedTime);
+        intent.putExtra(Task.STATE, task.state);
     }
 
     @Override
