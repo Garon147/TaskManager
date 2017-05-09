@@ -33,6 +33,8 @@ import orion.garon.tracker.database.TaskDAO;
 
 public class TaskFragment extends Fragment {
 
+    public Calendar currentDate;
+
     @Bind(R.id.task_name)
     EditText taskName;
 
@@ -88,44 +90,37 @@ public class TaskFragment extends Fragment {
         taskStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar mcurrentDate=Calendar.getInstance();
-                DatePickerDialog mDatePicker=new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-
-                        date = null;
-                        date = new Date(selectedyear, selectedmonth, selectedday);
-                        taskStartDate.setText(date.toString());
-
-                    }
-                },mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH), mcurrentDate.get(Calendar.DAY_OF_MONTH));
-                mDatePicker.setTitle("Select date");
-                mDatePicker.show();
+                currentDate = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                taskStartDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
+                            }
+                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
+                        currentDate.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
             }
         });
 
         taskDueDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar mcurrentDate=Calendar.getInstance();
-                DatePickerDialog mDatePicker=new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-
-                        date = null;
-                        date = new Date(selectedyear, selectedmonth, selectedday);
-                        taskDueDate.setText(date.toString());
-
-                    }
-                },mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH), mcurrentDate.get(Calendar.DAY_OF_MONTH));
-                mDatePicker.setTitle("Select date");
-                mDatePicker.show();
+                currentDate = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                taskDueDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
+                            }
+                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
+                        currentDate.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
             }
         });
     }
 
-    Date date;
-
-    public void
-    saveTask() {
+    public void saveTask() {
 
         try {
 
