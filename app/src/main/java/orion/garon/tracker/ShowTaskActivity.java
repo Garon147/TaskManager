@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import orion.garon.tracker.database.HelperFactory;
 import orion.garon.tracker.database.Task;
 
@@ -47,6 +48,8 @@ public class ShowTaskActivity extends AppCompatActivity {
     private Intent intent;
     private List<EditText> textFields;
     private Calendar currentDate;
+    private Presenter presenter;
+    private DialogInterface.OnClickListener onClickListener;
 
     @Bind(R.id.task_name)
     EditText taskName;
@@ -76,26 +79,13 @@ public class ShowTaskActivity extends AppCompatActivity {
     LinearLayout contentEdit;
 
     Context context = this;
-    DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-            ListView lv = ((AlertDialog) dialog).getListView();
-
-            if(which == dialog.BUTTON_POSITIVE) {
-                taskState.setText(Status.getAllStates().get(lv.getCheckedItemPosition()));
-            }
-
-        }
-    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_task);
         ButterKnife.bind(this);
-        HelperFactory.setDatabaseHelper(this);
-
+        presenter = new Presenter(this);
 
         selectedTask = new Task();
         intent = getIntent();
@@ -105,6 +95,12 @@ public class ShowTaskActivity extends AppCompatActivity {
         groupTextFields();
     }
 
+    @OnClick(R.id.button_create)
+    public void onClick(){
+        presenter.updateTask(selectedTask, taskName, taskTime, taskStartDate, taskDueDate, taskDescription,
+                taskState, taskProgress);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
 
 
     public void initViews() {
@@ -112,17 +108,6 @@ public class ShowTaskActivity extends AppCompatActivity {
         contentEdit.setVisibility(View.VISIBLE);
         createButton.setText(R.string.save_changes_button);
         createButton.setEnabled(false);
-
-
-
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                updateTask();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            }
-        });
 
         taskName.setText(selectedTask.name);
         taskTime.setText(String.valueOf(selectedTask.estimatedTime));
@@ -173,7 +158,16 @@ public class ShowTaskActivity extends AppCompatActivity {
             }
         });
 
+        onClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+                ListView lv = ((AlertDialog) dialog).getListView();
+                if(which == dialog.BUTTON_POSITIVE) {
+                    taskState.setText(Status.getAllStates().get(lv.getCheckedItemPosition()));
+                }
+            }
+        };
     }
 
     public AlertDialog createDialog() {
@@ -183,6 +177,7 @@ public class ShowTaskActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_singlechoice, Status.getAllStates());
         adb.setSingleChoiceItems(adapter, -1, onClickListener);
         adb.setPositiveButton("OK", onClickListener);
+        adb.setNegativeButton("Cancel", onClickListener);
 
         return adb.create();
     }
@@ -235,47 +230,7 @@ public class ShowTaskActivity extends AppCompatActivity {
         }
     }
 
-    public void updateTask() {
 
-        try {
-
-            TransactionManager.callInTransaction(HelperFactory.getDatabaseHelper().getConnectionSource(), new Callable<Void>() {
-
-                @Override
-                public Void call() throws Exception {
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            try {
-
-                                Task task = HelperFactory.getDatabaseHelper().getTaskDAO().getTaskById(selectedTask.id);
-
-                                if(task != null) {
-                                    task.state = taskState.getText().toString();
-                                    task.estimatedTime = Float.valueOf(taskTime.getText().toString());
-                                    task.completion = Integer.valueOf(taskProgress.getText().toString());
-                                    task.name = taskName.getText().toString();
-                                    task.description = taskDescription.getText().toString();
-                                    task.startDate = taskStartDate.getText().toString();
-                                    task.dueDate = taskDueDate.getText().toString();
-
-                                    HelperFactory.getDatabaseHelper().getTaskDAO().update(task);
-                                }
-
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

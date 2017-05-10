@@ -46,7 +46,7 @@ public class Task {
     @DatabaseField(dataType = DataType.STRING, columnName = DUE_DATE)
     public String dueDate;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = DESCRIPTION)
+    @DatabaseField(dataType = DataType.STRING, columnName = DESCRIPTION, canBeNull = true)
     public String description;
 
     public Task() {

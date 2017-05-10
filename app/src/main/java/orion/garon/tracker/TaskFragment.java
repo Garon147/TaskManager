@@ -34,6 +34,8 @@ import orion.garon.tracker.database.TaskDAO;
 
 public class TaskFragment extends Fragment {
 
+    private Presenter presenter;
+
     public Calendar currentDate;
 
     @Bind(R.id.task_name)
@@ -59,8 +61,8 @@ public class TaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_task, container, false);
+        presenter = new Presenter(getContext());
         ButterKnife.bind(this, view);
-        HelperFactory.setDatabaseHelper(getContext());
 
         return view;
     }
@@ -69,12 +71,13 @@ public class TaskFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        currentDate = Calendar.getInstance();
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                saveTask();
+                presenter.saveTask(taskName, taskTime, taskStartDate, taskDueDate, taskDescription);
                 Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getActivity(), MainActivity.class));
             }
@@ -84,7 +87,7 @@ public class TaskFragment extends Fragment {
         taskStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentDate = Calendar.getInstance();
+
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -100,7 +103,7 @@ public class TaskFragment extends Fragment {
         taskDueDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentDate = Calendar.getInstance();
+
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -114,39 +117,4 @@ public class TaskFragment extends Fragment {
         });
     }
 
-    public void saveTask() {
-
-        try {
-
-            TransactionManager.callInTransaction(HelperFactory.getDatabaseHelper().getConnectionSource(), new Callable<Void>() {
-
-                @Override
-                public Void call() throws Exception {
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            try {
-
-                                Task task = new Task(taskName.getText().toString(), 0, Status.NEW.toString(),
-                                        Float.parseFloat(taskTime.getText().toString()),
-                                        taskStartDate.getText().toString(),
-                                        taskDueDate.getText().toString(),
-                                        taskDescription.getText().toString());
-                                HelperFactory.getDatabaseHelper().getTaskDAO().createOrUpdate(task);
-
-
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -26,12 +26,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-//        ConnectionSource cs = getConnectionSource();
-//        try {
-//            BaseDaoImpl<Task, Integer> dao = new TaskDAO(cs, Task.class);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override

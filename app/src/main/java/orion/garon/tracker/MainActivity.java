@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import orion.garon.tracker.database.HelperFactory;
 import orion.garon.tracker.database.Task;
 import orion.garon.tracker.database.TaskDAO;
@@ -37,11 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayoutManager layoutManager;
     private RecyclerAdapter recyclerAdapter;
+    private Presenter presenter;
 
     private TaskFragment taskFragment;
     private FragmentManager fragmentManager;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,36 +50,32 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        presenter = new Presenter(this);
         setSupportActionBar(toolbar);
-        HelperFactory.setDatabaseHelper(this);
+
+        taskFragment = new TaskFragment();
+        fragmentManager = getSupportFragmentManager();
+
+        initViews();
+    }
+
+    public void initViews() {
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerAdapter = new RecyclerAdapter();
         recyclerView.setAdapter(recyclerAdapter);
-        try {
-            recyclerAdapter.addAll((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks());
-            recyclerAdapter.refreshData((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        taskFragment = new TaskFragment();
-        fragmentManager = getSupportFragmentManager();
+        recyclerAdapter.addAll(presenter.tasks);
+        recyclerAdapter.refreshData(presenter.tasks);
 
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
 
                 Intent intent = new Intent(getApplicationContext(), ShowTaskActivity.class);
-                try{
-                    makeIntent((Task)(((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks()).get(position)), intent);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                makeIntent(presenter.tasks.get(position), intent);
                 startActivity(intent);
-
             }
 
             @Override
@@ -87,27 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }));
-
-
-
-
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                fragmentManager.
-                        beginTransaction().
-                        add(R.id.frame_layout, taskFragment).
-                        addToBackStack(null).
-                        commit();
-                toolbar.setTitle("Create Task");
-                fab.setVisibility(View.GONE);
-
-            }
-        });
     }
+
 
     @Override
     public void onBackPressed() {
@@ -134,25 +111,36 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Task.STATE, task.state);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    @OnClick(R.id.fab)
+    public void onClick() {
+        fragmentManager.
+                beginTransaction().
+                add(R.id.frame_layout, taskFragment).
+                addToBackStack(null).
+                commit();
+        toolbar.setTitle(R.string.create_task_toolbar);
+        fab.setVisibility(View.GONE);
     }
 }
