@@ -1,7 +1,6 @@
 package orion.garon.tracker;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -169,25 +168,22 @@ public class ShowTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
-                showDialog(1);
+                AlertDialog dialog = createDialog();
+                dialog.show();
             }
         });
 
 
     }
 
-    protected Dialog onCreateDialog(int id) {
+    public AlertDialog createDialog() {
 
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        if(id ==1) {
+        adb.setTitle("States");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_singlechoice, Status.getAllStates());
+        adb.setSingleChoiceItems(adapter, -1, onClickListener);
+        adb.setPositiveButton("OK", onClickListener);
 
-            adb.setTitle("States");
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice, Status.getAllStates());
-            adb.setSingleChoiceItems(adapter, -1, onClickListener);
-            adb.setPositiveButton("OK", onClickListener);
-
-        }
         return adb.create();
     }
 

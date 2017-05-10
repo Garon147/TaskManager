@@ -36,7 +36,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         title.setText(task.name);
         state.setText(task.state);
-        dates.setText(task.dueDate);
+        dates.setText("Due "+task.dueDate);
         progressBar.setProgress(task.completion);
 
     }

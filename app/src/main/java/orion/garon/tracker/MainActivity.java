@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import orion.garon.tracker.database.HelperFactory;
 import orion.garon.tracker.database.Task;
 import orion.garon.tracker.database.TaskDAO;
@@ -24,24 +26,33 @@ import orion.garon.tracker.database.TaskDAO;
 public class MainActivity extends AppCompatActivity {
 
 
-    private RecyclerView recyclerView;
+    @Bind(R.id.recyclerView)
+    public RecyclerView recyclerView;
+
+    @Bind(R.id.fab)
+    public FloatingActionButton fab;
+
+    @Bind(R.id.toolbar)
+    public Toolbar toolbar;
+
     private LinearLayoutManager layoutManager;
     private RecyclerAdapter recyclerAdapter;
 
     private TaskFragment taskFragment;
     private FragmentManager fragmentManager;
 
-    private FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         HelperFactory.setDatabaseHelper(this);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerViews);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
