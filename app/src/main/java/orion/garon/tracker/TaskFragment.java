@@ -73,16 +73,35 @@ public class TaskFragment extends Fragment {
 
         currentDate = Calendar.getInstance();
         orion.garon.tracker.DatePicker.setDatePicker(getContext(), taskStartDate, taskDueDate, currentDate);
+        orion.garon.tracker.DatePicker.setCallback(taskTime);
     }
 
     @OnClick(R.id.button_create)
     public void onClick() {
 
+        if(checkInput()) {
 
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    presenter.saveTask(taskName, taskTime, taskStartDate, taskDueDate, taskDescription);
+                }
+            });
+            thread.start();
+//            Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getActivity(), MainActivity.class));
+        }
+    }
 
-        presenter.saveTask(taskName, taskTime, taskStartDate, taskDueDate, taskDescription);
-        Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+    public boolean checkInput() {
+
+        if(taskName.getText().toString().isEmpty() || taskTime.getText().toString().isEmpty() ||
+                taskStartDate.getText().toString().isEmpty() || taskDueDate.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), R.string.input_error_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

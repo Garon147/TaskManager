@@ -13,6 +13,7 @@ import android.text.method.KeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -99,9 +100,19 @@ public class ShowTaskActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_create)
     public void onClick(){
-        presenter.updateTask(selectedTask, taskName, taskTime, taskStartDate, taskDueDate, taskDescription,
-                taskState, taskProgress);
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
+        if(checkInput() && checkProgress()) {
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    presenter.updateTask(selectedTask, taskName, taskTime, taskStartDate, taskDueDate, taskDescription,
+                            taskState, taskProgress);
+                }
+            });
+            thread.start();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
     }
 
     public void initViews() {
@@ -117,6 +128,10 @@ public class ShowTaskActivity extends AppCompatActivity {
         taskStartDate.setText(selectedTask.startDate);
         taskProgress.setText(String.valueOf(selectedTask.completion));
         taskState.setText(selectedTask.state);
+
+        orion.garon.tracker.DatePicker.setCallback(taskTime);
+        taskProgress.setLongClickable(false);
+        taskState.setLongClickable(false);
     }
 
     public void initTask() {
@@ -193,5 +208,26 @@ public class ShowTaskActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
+
+    public boolean checkInput() {
+
+        if(taskName.getText().toString().isEmpty() || taskTime.getText().toString().isEmpty() ||
+                taskProgress.getText().toString().isEmpty()) {
+            Toast.makeText(context, R.string.input_error_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean checkProgress() {
+
+        if(Integer.valueOf(taskProgress.getText().toString()) > 100) {
+            Toast.makeText(context, R.string.progress_error_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 }

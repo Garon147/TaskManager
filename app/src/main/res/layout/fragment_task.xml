@@ -19,7 +19,7 @@
                 android:id="@+id/task_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Task name"
+                android:hint="@string/task_name_hint"
                 style="@style/GreyTextStyle"/>
 
             <LinearLayout
@@ -34,15 +34,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:hint="State"
                     style="@style/GreyTextStyle"/>
 
                 <EditText
                     android:id="@+id/task_progress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/task_progress_hint"
                     android:inputType="numberSigned"
-                    android:hint="Progress"
                     style="@style/GreyTextStyle" />
             </LinearLayout>
 
@@ -50,38 +49,38 @@
                 android:id="@+id/task_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/task_time_hint"
                 android:inputType="numberDecimal"
-                android:hint="Estimated time"
                 style="@style/GreyTextStyle"/>
 
             <EditText
                 android:id="@+id/task_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/task_start_hint"
                 android:focusable="false"
-                android:hint="Start date"
                 style="@style/GreyTextStyle"/>
 
             <EditText
                 android:id="@+id/task_due"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/task_due_hint"
                 android:focusable="false"
-                android:hint="Due date (Optional)"
                 style="@style/GreyTextStyle"/>
 
             <EditText
                 android:id="@+id/task_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Task description (Optional)"
+                android:hint="@string/task_description_hint"
                 style="@style/GreyTextStyle"/>
 
             <Button
                 android:id="@+id/button_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create Task"
+                android:text="@string/create_task_toolbar"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"/>
         </LinearLayout>

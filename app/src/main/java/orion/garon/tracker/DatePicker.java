@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -30,7 +33,7 @@ public class DatePicker {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                                taskStartDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
+                                taskStartDate.setText(dayOfMonth+"-"+(month+1)+"-"+year);
                             }
                         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
                         currentDate.get(Calendar.DAY_OF_MONTH));
@@ -46,13 +49,16 @@ public class DatePicker {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                                taskDueDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
+                                taskDueDate.setText(dayOfMonth+"-"+(month+1)+"-"+year);
                             }
                         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
                         currentDate.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.show();
             }
         });
+
+        taskStartDate.setLongClickable(false);
+        taskDueDate.setLongClickable(false);
     }
 
     public static AlertDialog createDialog(Context context, final EditText taskState) {
@@ -78,5 +84,8 @@ public class DatePicker {
         return adb.create();
     }
 
+    public static void setCallback(EditText taskTime) {
 
+        taskTime.setLongClickable(false);
+    }
 }
