@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.j256.ormlite.misc.TransactionManager;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +50,7 @@ public class ShowTaskActivity extends AppCompatActivity {
     private List<EditText> textFields;
     private Calendar currentDate;
     private Presenter presenter;
-    private DialogInterface.OnClickListener onClickListener;
+    private Context context;
 
     @Bind(R.id.task_name)
     EditText taskName;
@@ -78,8 +79,6 @@ public class ShowTaskActivity extends AppCompatActivity {
     @Bind(R.id.content_edit)
     LinearLayout contentEdit;
 
-    Context context = this;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +88,12 @@ public class ShowTaskActivity extends AppCompatActivity {
 
         selectedTask = new Task();
         intent = getIntent();
+        context = this;
+        currentDate = Calendar.getInstance();
 
         initTask();
         initViews();
+        setListeners();
         groupTextFields();
     }
 
@@ -101,7 +103,6 @@ public class ShowTaskActivity extends AppCompatActivity {
                 taskState, taskProgress);
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
-
 
     public void initViews() {
 
@@ -116,73 +117,7 @@ public class ShowTaskActivity extends AppCompatActivity {
         taskStartDate.setText(selectedTask.startDate);
         taskProgress.setText(String.valueOf(selectedTask.completion));
         taskState.setText(selectedTask.state);
-
-        taskStartDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentDate = Calendar.getInstance();
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                taskStartDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
-                            }
-                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
-                        currentDate.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-            }
-        });
-
-        taskDueDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentDate = Calendar.getInstance();
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                taskDueDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
-                            }
-                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
-                        currentDate.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-            }
-        });
-
-        taskState.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog dialog = createDialog();
-                dialog.show();
-            }
-        });
-
-        onClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                ListView lv = ((AlertDialog) dialog).getListView();
-                if(which == dialog.BUTTON_POSITIVE) {
-                    taskState.setText(Status.getAllStates().get(lv.getCheckedItemPosition()));
-                }
-            }
-        };
     }
-
-    public AlertDialog createDialog() {
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        adb.setTitle("States");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_singlechoice, Status.getAllStates());
-        adb.setSingleChoiceItems(adapter, -1, onClickListener);
-        adb.setPositiveButton("OK", onClickListener);
-        adb.setNegativeButton("Cancel", onClickListener);
-
-        return adb.create();
-    }
-
-
 
     public void initTask() {
 
@@ -230,8 +165,6 @@ public class ShowTaskActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_show_task, menu);
@@ -247,5 +180,18 @@ public class ShowTaskActivity extends AppCompatActivity {
             }
         });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void setListeners() {
+
+        orion.garon.tracker.DatePicker.setDatePicker(context, taskStartDate, taskDueDate, currentDate);
+        taskState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog dialog = orion.garon.tracker.DatePicker.createDialog(context, taskState);
+                dialog.show();
+            }
+        });
     }
 }

@@ -72,49 +72,17 @@ public class TaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         currentDate = Calendar.getInstance();
+        orion.garon.tracker.DatePicker.setDatePicker(getContext(), taskStartDate, taskDueDate, currentDate);
+    }
 
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                presenter.saveTask(taskName, taskTime, taskStartDate, taskDueDate, taskDescription);
-                Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getActivity(), MainActivity.class));
-            }
-        });
+    @OnClick(R.id.button_create)
+    public void onClick() {
 
 
-        taskStartDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                taskStartDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
-                            }
-                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
-                        currentDate.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-            }
-        });
-
-        taskDueDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                taskDueDate.setText(year+"-"+(month+1)+"-"+dayOfMonth);
-                            }
-                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH),
-                        currentDate.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-            }
-        });
+        presenter.saveTask(taskName, taskTime, taskStartDate, taskDueDate, taskDescription);
+        Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getActivity(), MainActivity.class));
     }
 
 }
