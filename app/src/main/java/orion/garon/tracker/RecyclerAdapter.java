@@ -40,4 +40,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         this.tasks.addAll(items);
         notifyItemRangeChanged(position, this.tasks.size());
     }
+
+    public void refreshData(ArrayList<Task> tasks) {
+
+        this.tasks.clear();
+        addAll(tasks);
+        notifyDataSetChanged();
+    }
 }

@@ -1,6 +1,7 @@
 package orion.garon.tracker;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -75,6 +76,7 @@ public class TaskFragment extends Fragment {
 
                 saveTask();
                 Toast.makeText(getContext(), "SAVE SUCCESSFUL", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), MainActivity.class));
             }
         });
 

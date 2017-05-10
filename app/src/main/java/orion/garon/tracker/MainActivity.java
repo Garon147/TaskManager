@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         HelperFactory.setDatabaseHelper(this);
 
@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
         try {
             recyclerAdapter.addAll((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks());
+            recyclerAdapter.refreshData((ArrayList) ((HelperFactory.getDatabaseHelper().getTaskDAO())).getAllTasks());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         add(R.id.frame_layout, taskFragment).
                         addToBackStack(null).
                         commit();
+                toolbar.setTitle("Create Task");
                 fab.setVisibility(View.GONE);
 
             }
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStack();
             fab.setVisibility(View.VISIBLE);
         }
+
+        getSupportActionBar().setTitle(R.string.app_name);
     }
 
     public void makeIntent(Task task, Intent intent) {
