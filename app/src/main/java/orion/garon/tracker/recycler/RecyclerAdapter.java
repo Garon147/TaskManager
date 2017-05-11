@@ -1,4 +1,4 @@
-package orion.garon.tracker;
+package orion.garon.tracker.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import orion.garon.tracker.R;
 import orion.garon.tracker.database.Task;
 
 /**

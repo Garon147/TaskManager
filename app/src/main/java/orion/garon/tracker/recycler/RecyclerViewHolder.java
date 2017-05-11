@@ -1,4 +1,4 @@
-package orion.garon.tracker;
+package orion.garon.tracker.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import orion.garon.tracker.R;
 import orion.garon.tracker.database.Task;
 
 /**

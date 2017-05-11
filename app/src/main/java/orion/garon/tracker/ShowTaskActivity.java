@@ -4,15 +4,19 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.method.KeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -92,6 +96,8 @@ public class ShowTaskActivity extends AppCompatActivity {
         context = this;
         currentDate = Calendar.getInstance();
 
+
+
         initTask();
         initViews();
         setListeners();
@@ -119,7 +125,7 @@ public class ShowTaskActivity extends AppCompatActivity {
 
         contentEdit.setVisibility(View.VISIBLE);
         createButton.setText(R.string.save_changes_button);
-        createButton.setEnabled(false);
+        createButton.setVisibility(View.GONE);
 
         taskName.setText(selectedTask.name);
         taskTime.setText(String.valueOf(selectedTask.estimatedTime));
@@ -132,6 +138,15 @@ public class ShowTaskActivity extends AppCompatActivity {
         orion.garon.tracker.DatePicker.setCallback(taskTime);
         taskProgress.setLongClickable(false);
         taskState.setLongClickable(false);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        taskProgress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+            }
+        });
     }
 
     public void initTask() {
@@ -170,12 +185,12 @@ public class ShowTaskActivity extends AppCompatActivity {
             if(buttonIsChecked) {
 
                 textFields.get(i).setEnabled(true);
-                createButton.setEnabled(true);
+                createButton.setVisibility(View.VISIBLE);
 
             } else {
 
                 textFields.get(i).setEnabled(false);
-                createButton.setEnabled(false);
+                createButton.setVisibility(View.GONE);
             }
         }
     }
@@ -225,6 +240,7 @@ public class ShowTaskActivity extends AppCompatActivity {
 
         if(Integer.valueOf(taskProgress.getText().toString()) > 100) {
             Toast.makeText(context, R.string.progress_error_msg, Toast.LENGTH_SHORT).show();
+            taskProgress.getBackground().mutate().setColorFilter(getResources().getColor(R.color.red, null), PorterDuff.Mode.SRC_ATOP);
             return false;
         } else {
             return true;

@@ -1,4 +1,4 @@
-package orion.garon.tracker;
+package orion.garon.tracker.recycler;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
